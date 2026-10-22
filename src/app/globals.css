@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+/* Identidad base de la demo (se refina en la Fase 5): azul noche, amarillo
+   bandera y rojo de acento, sobre fondos lisos. */
+:root {
+  --background: #0b1f3a;
+  --surface: #13305a;
+  --foreground: #f5f7fb;
+  --muted: #b8c4d9;
+  --accent: #ffd23f;
+  --accent-ink: #1a1400;
+  --danger: #e63946;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-geist-sans);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
