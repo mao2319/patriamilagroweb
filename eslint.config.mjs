@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Build WebGL generada por Unity (código minificado de terceros).
+    "public/unity/**",
   ]),
 ]);
 

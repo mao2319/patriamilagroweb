@@ -31,7 +31,15 @@ npm run dev                  # http://localhost:3000
 Ver `.env.example`. Todas son públicas (`NEXT_PUBLIC_`): **nunca** poner secretos aquí.
 
 - `NEXT_PUBLIC_APP_STORE_URL`, `NEXT_PUBLIC_GOOGLE_PLAY_URL`, `NEXT_PUBLIC_ROBLOX_URL`: enlaces a la versión completa. Si faltan o no son del dominio de la tienda, el botón dice «Próximamente».
-- `NEXT_PUBLIC_UNITY_BUILD_URL`: carpeta pública del build WebGL (Fase 4).
+- `NEXT_PUBLIC_UNITY_BUILD_URL`: carpeta del build WebGL. Por defecto `/unity` (este mismo sitio), que es donde `next.config.ts` envía los encabezados Brotli que necesita Unity.
+
+## El juego (build WebGL de Unity)
+
+El build no se versiona aquí: se genera desde el proyecto Unity y se copia a `public/unity/Build` (ver `Docs/BUILD_WEBGL.md` en el repo del juego). Luego `npm run dev` y abrir `/jugar`.
+
+- `src/components/game/UnityGame.tsx`: carga el juego con el progreso real de Unity, avisa si tarda, permite reintentar y detecta si el navegador no soporta WebGL 2.
+- `src/lib/unityBridge.ts`: valida los eventos del juego (`ready`, `levelCompleted`, `levelFailed`).
+- `src/components/game/GameExperience.tsx`: al completar el nivel muestra el resultado y las tiendas (la del dispositivo primero).
 
 ## Estructura
 

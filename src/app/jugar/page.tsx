@@ -1,19 +1,22 @@
 import Link from "next/link";
+import GameExperience from "@/components/game/GameExperience";
 import { DEFAULT_LOCALE, getDictionary } from "@/i18n/dictionaries";
 
-// Aquí se monta el build WebGL de Unity en la Fase 4 (carga con progreso real,
-// errores y reintento). Por ahora reserva la ruta.
+// Dónde está el build WebGL de Unity. Por defecto, en este mismo sitio
+// (public/unity), que es donde el hosting envía los encabezados que pide Unity.
+const BUILD_URL = (process.env.NEXT_PUBLIC_UNITY_BUILD_URL || "/unity").replace(/\/$/, "");
+
 export default function Jugar() {
   const t = getDictionary(DEFAULT_LOCALE);
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-14 sm:px-8">
-      <h1 className="text-3xl font-bold">{t.play.title}</h1>
-      <div className="flex aspect-video w-full items-center justify-center rounded-2xl bg-surface p-6 text-center text-muted">
-        {t.play.pending}
+    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-5 px-4 py-8 sm:px-8">
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <h1 className="text-2xl font-bold sm:text-3xl">{t.play.title}</h1>
+        <Link href="/" className="underline underline-offset-4">
+          {t.play.back}
+        </Link>
       </div>
-      <Link href="/" className="self-start underline underline-offset-4">
-        {t.play.back}
-      </Link>
+      <GameExperience t={t} buildUrl={BUILD_URL} />
     </main>
   );
 }
