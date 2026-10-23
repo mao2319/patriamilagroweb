@@ -33,13 +33,15 @@ Ver `.env.example`. Todas son públicas (`NEXT_PUBLIC_`): **nunca** poner secret
 
 - `NEXT_PUBLIC_APP_STORE_URL`, `NEXT_PUBLIC_GOOGLE_PLAY_URL`, `NEXT_PUBLIC_ROBLOX_URL`: enlaces a la versión completa. Si faltan o no son del dominio de la tienda, el botón dice «Próximamente».
 - `NEXT_PUBLIC_UNITY_BUILD_URL`: carpeta del build WebGL. Por defecto `/unity` (este mismo sitio), que es donde `next.config.ts` envía los encabezados Brotli que necesita Unity.
-- `UNITY_BUILD_ORIGIN` (solo en Vercel, no pública): dirección del almacén de Vercel Blob con la build. Si `public/unity` no está (deploys desde GitHub), `/unity/...` se sirve desde ahí con los mismos encabezados.
+- `UNITY_BUILD_ORIGIN` (solo en Vercel, no pública): dirección del almacén de Vercel Blob con la build. Si `public/unity` no está (deploys desde GitHub), `npm run build` la descarga de ahí antes de compilar (`scripts/fetch-unity-build.mjs`) y se sirve como archivo estático.
 
 ## El juego (build WebGL de Unity)
 
 El build no se versiona aquí: se genera desde el proyecto Unity y se copia a `public/unity/Build` (ver `Docs/BUILD_WEBGL.md` en el repo del juego). Luego `npm run dev` y abrir `/jugar`.
 
-**Publicar una build nueva:** `npm run publish:unity` (sube los archivos a Vercel Blob). Los deploys automáticos desde GitHub la toman de ahí; no hace falta volver a desplegar el portal. Blob la guarda en caché 5 minutos.
+**Publicar una build nueva:** `npm run publish:unity` (sube los archivos a Vercel Blob) y luego un nuevo deploy del portal (un push o «Redeploy» en Vercel), que la descarga al compilar.
+
+No se sirve directo desde Blob por un proxy: Vercel volvería a comprimir los archivos que Unity ya comprimió con Brotli y el navegador no podría leerlos.
 
 - `src/components/game/UnityGame.tsx`: carga el juego con el progreso real de Unity, avisa si tarda, permite reintentar y detecta si el navegador no soporta WebGL 2.
 - `src/lib/unityBridge.ts`: valida los eventos del juego (`ready`, `levelCompleted`, `levelFailed`).

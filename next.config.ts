@@ -25,17 +25,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  // Si la build de Unity no está en public/ (deploys automáticos desde GitHub,
-  // donde no se versiona), se sirve desde Vercel Blob por la misma ruta. Los
-  // encabezados de arriba se aplican igual. Ver scripts/publish-unity-build.mjs.
-  async rewrites() {
-    const origin = process.env.UNITY_BUILD_ORIGIN?.replace(/\/$/, "");
-    return {
-      beforeFiles: [],
-      afterFiles: [],
-      fallback: origin ? [{ source: "/unity/:path*", destination: `${origin}/unity/:path*` }] : [],
-    };
-  },
   partialPrefetching: true,
   turbopack: {
     rules: {
