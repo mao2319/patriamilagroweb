@@ -25,6 +25,14 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // /admin sube fotos de misiones (hasta 4 MB) con una Server Action.
+  experimental: {
+    serverActions: { bodySizeLimit: "4.5mb" },
+  },
+  // Fotos de misiones y portada subidas en /admin (Blob del proyecto).
+  images: {
+    remotePatterns: [{ protocol: "https", hostname: "*.public.blob.vercel-storage.com", pathname: "/**" }],
+  },
   partialPrefetching: true,
   turbopack: {
     rules: {

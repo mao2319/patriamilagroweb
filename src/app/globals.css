@@ -21,6 +21,13 @@
   --color-accent-ink: var(--accent-ink);
   --color-danger: var(--danger);
   --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-display-face), var(--font-geist-sans), system-ui, sans-serif;
+  --color-game-purple: #6c5ce7;
+  --color-game-violet: #8b5cf6;
+  --color-game-green: #3cc13b;
+  --color-game-pink: #e8456b;
+  --color-game-orange: #f59e0b;
+  --color-game-blue: #2f80ed;
 }
 
 body {
@@ -32,4 +39,31 @@ body {
 :focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 3px;
+}
+
+/* Botón de juego: relieve inferior que se hunde al presionar. */
+.game-button {
+  box-shadow: 0 6px 0 rgb(0 0 0 / 0.35);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.game-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 rgb(0 0 0 / 0.35);
+}
+.game-button:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 rgb(0 0 0 / 0.35);
+}
+/* Texto de título con contorno oscuro (legible sobre fotos). */
+.game-outline {
+  -webkit-text-stroke: 2px rgb(20 10 50 / 0.85);
+  paint-order: stroke fill;
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-button,
+  .game-button:hover,
+  .game-button:active {
+    transition: none;
+    transform: none;
+  }
 }

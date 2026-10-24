@@ -10,9 +10,10 @@ import { formatDuration, type GameEvent } from "@/lib/unityBridge";
 type Completed = Extract<GameEvent, { type: "levelCompleted" }>;
 
 // El juego y lo que pasa alrededor: cuando el nivel termina, la invitación a
-// la versión completa (con la tienda del dispositivo primero). La lógica de la
+// la versión completa (con la tienda del dispositivo primero), debajo del
+// juego para no tapar el festejo ni el resumen que muestra Unity. La lógica de la
 // partida sigue en Unity; aquí solo se reacciona a su aviso.
-export default function GameExperience({ t, buildUrl }: { t: Dictionary; buildUrl: string }) {
+export default function GameExperience({ t, buildUrl, buildVersion }: { t: Dictionary; buildUrl: string; buildVersion?: string }) {
   const [completed, setCompleted] = useState<Completed | null>(null);
 
   const onGameEvent = useCallback((event: GameEvent) => {
@@ -21,37 +22,29 @@ export default function GameExperience({ t, buildUrl }: { t: Dictionary; buildUr
 
   return (
     <div className="relative">
-      <UnityGame t={t} buildUrl={buildUrl} onGameEvent={onGameEvent} />
+      <UnityGame t={t} buildUrl={buildUrl} buildVersion={buildVersion} onGameEvent={onGameEvent} />
 
       {completed && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-background/90 p-4" role="dialog" aria-modal="true" aria-labelledby="resultado-titulo">
-          <div className="flex w-full max-w-xl flex-col gap-5 rounded-3xl bg-surface p-6 sm:p-8">
-            <h2 id="resultado-titulo" className="text-3xl font-black">
+        // Debajo del juego, sin taparlo: el resumen y el festejo los muestra Unity.
+        <section className="mt-6 flex flex-col gap-4 rounded-3xl bg-surface p-6 sm:p-8" aria-labelledby="resultado-titulo">
+          <div className="flex flex-wrap items-baseline justify-between gap-3">
+            <h2 id="resultado-titulo" className="text-2xl font-black">
               {t.result.title}
             </h2>
-            <dl className="grid grid-cols-3 gap-3 text-center">
-              <div className="rounded-2xl bg-background p-3">
-                <dt className="text-sm text-muted">{t.result.time}</dt>
-                <dd className="text-2xl font-bold">{formatDuration(completed.timeSeconds)}</dd>
-              </div>
-              <div className="rounded-2xl bg-background p-3">
-                <dt className="text-sm text-muted">{t.result.score}</dt>
-                <dd className="text-2xl font-bold">{completed.score.toLocaleString("es-CO")}</dd>
-              </div>
-              <div className="rounded-2xl bg-background p-3">
-                <dt className="text-sm text-muted">{t.result.objectives}</dt>
-                <dd className="text-2xl font-bold">
-                  {completed.objectivesDone}/{completed.objectivesTotal}
-                </dd>
-              </div>
-            </dl>
-            <p className="text-muted">{t.result.demo}</p>
-            <StoreButtons t={t} order={storeOrder(currentPlatform())} />
-            <button type="button" onClick={() => setCompleted(null)} className="self-start text-sm underline underline-offset-4">
-              {t.result.close}
-            </button>
+            <p className="text-sm text-muted">
+              {t.result.score}: <strong className="text-foreground">{completed.score.toLocaleString("es-CO")}</strong> · {t.result.time}:{" "}
+              <strong className="text-foreground">{formatDuration(completed.timeSeconds)}</strong> · {t.result.objectives}:{" "}
+              <strong className="text-foreground">
+                {completed.objectivesDone}/{completed.objectivesTotal}
+              </strong>
+            </p>
           </div>
-        </div>
+          <p className="text-muted">{t.result.demo}</p>
+          <StoreButtons t={t} order={storeOrder(currentPlatform())} />
+          <button type="button" onClick={() => setCompleted(null)} className="self-start text-sm underline underline-offset-4">
+            {t.result.dismiss}
+          </button>
+        </section>
       )}
     </div>
   );

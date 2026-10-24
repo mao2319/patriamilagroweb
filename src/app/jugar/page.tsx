@@ -1,6 +1,7 @@
 import Link from "next/link";
 import GameExperience from "@/components/game/GameExperience";
 import { DEFAULT_LOCALE, getDictionary } from "@/i18n/dictionaries";
+import { unityBuildVersion } from "@/lib/unityBuildVersion";
 
 // Dónde está el build WebGL de Unity. Por defecto, en este mismo sitio
 // (public/unity), que es donde el hosting envía los encabezados que pide Unity.
@@ -16,7 +17,7 @@ export default function Jugar() {
           {t.play.back}
         </Link>
       </div>
-      <GameExperience t={t} buildUrl={BUILD_URL} />
+      <GameExperience t={t} buildUrl={BUILD_URL} buildVersion={unityBuildVersion()} />
     </main>
   );
 }

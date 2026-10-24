@@ -42,10 +42,12 @@ const noSubscribe = () => () => undefined;
 interface UnityGameProps {
   t: Dictionary;
   buildUrl: string;
+  /** Huella de la build: evita que el navegador mezcle archivos de builds distintas. */
+  buildVersion?: string;
   onGameEvent?: (event: GameEvent) => void;
 }
 
-export default function UnityGame({ t, buildUrl, onGameEvent }: UnityGameProps) {
+export default function UnityGame({ t, buildUrl, buildVersion, onGameEvent }: UnityGameProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const instanceRef = useRef<UnityInstance | null>(null);
   // En el servidor se asume soporte; en el navegador se comprueba de verdad.
@@ -65,8 +67,9 @@ export default function UnityGame({ t, buildUrl, onGameEvent }: UnityGameProps) 
     let cancelled = false;
     const slowTimer = window.setTimeout(() => setSlow(true), SLOW_AFTER_MS);
 
+    const version = buildVersion ? `?v=${buildVersion}` : "";
     const script = document.createElement("script");
-    script.src = `${buildUrl}/Build/${BUILD_NAME}.loader.js`;
+    script.src = `${buildUrl}/Build/${BUILD_NAME}.loader.js${version}`;
     script.async = true;
     script.onerror = () => !cancelled && setStatus("error");
     script.onload = () => {
@@ -79,9 +82,9 @@ export default function UnityGame({ t, buildUrl, onGameEvent }: UnityGameProps) 
         .createUnityInstance(
           canvas,
           {
-            dataUrl: `${buildUrl}/Build/${BUILD_NAME}.data.br`,
-            frameworkUrl: `${buildUrl}/Build/${BUILD_NAME}.framework.js.br`,
-            codeUrl: `${buildUrl}/Build/${BUILD_NAME}.wasm.br`,
+            dataUrl: `${buildUrl}/Build/${BUILD_NAME}.data.br${version}`,
+            frameworkUrl: `${buildUrl}/Build/${BUILD_NAME}.framework.js.br${version}`,
+            codeUrl: `${buildUrl}/Build/${BUILD_NAME}.wasm.br${version}`,
             streamingAssetsUrl: `${buildUrl}/StreamingAssets`,
             companyName: "Capital Games",
             productName: "Firme por la Patria",
@@ -112,7 +115,7 @@ export default function UnityGame({ t, buildUrl, onGameEvent }: UnityGameProps) 
       instanceRef.current = null;
       if (instance) void instance.Quit().catch(() => undefined);
     };
-  }, [buildUrl, attempt, supported]);
+  }, [buildUrl, buildVersion, attempt, supported]);
 
   const retry = useCallback(() => {
     setStatus("loading");
